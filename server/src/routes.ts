@@ -4,11 +4,18 @@
 
 import express from 'express';
 
+import MechanicalsController from './controllers/MechanicalsController';
+import ItemController from './controllers/ItemsController';
+
 const routes = express.Router();
 
-routes.get('/', (request, response)=> {
+const mechanicalsController = new MechanicalsController();
+const itemController = new ItemController();
 
-    return response.json({message: "herllo worlds"});
-});
+routes.get('/items', itemController.index);
+
+routes.post('/mechanicals', mechanicalsController.create);
+routes.get('/mechanicals', mechanicalsController.index);   //index quando listar todos
+routes.get('/mechanicals/:id', mechanicalsController.show); //show quando listar um item unico
 
 export default routes;
