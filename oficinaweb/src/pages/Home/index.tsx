@@ -1,7 +1,9 @@
 import React from 'react';
-import './style.css';
 import { FiLogIn} from 'react-icons/fi';
+import { Link } from 'react-router-dom';
+
 import logo from '../../assets/logo.png';
+import './style.css';
 
 const Home = () =>{
     return(
@@ -13,10 +15,10 @@ const Home = () =>{
                 <main>
                     <h1>Seu marketplace de Oficinas Mecânicas</h1>
                     <p>Ajudamos pessoas a encontrar Oficinas mais próximas da sua localidade atual!</p>
-                    <a href="/cadastro">
+                    <Link to="/create-mechanical">
                         <span><FiLogIn/></span>
                         <strong>Cadastre a sua Empresa aqui!</strong>
-                    </a>
+                    </Link>
                 </main>
                 
             </div>
