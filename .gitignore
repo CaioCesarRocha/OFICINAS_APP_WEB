@@ -1,3 +1,6 @@
 /node_modules
 /server/node_modules
 /oficinaweb/node_modules
+/oficinamobile/node_modules
+/oficinamobile/.expo
+
