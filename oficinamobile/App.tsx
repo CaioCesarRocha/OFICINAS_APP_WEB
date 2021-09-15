@@ -6,7 +6,7 @@ import { Roboto_400Regular, Roboto_500Medium} from '@expo-google-fonts/roboto'; 
 import { Ubuntu_700Bold, useFonts} from '@expo-google-fonts/ubuntu';
 
 
-import Home from './src/pages/Home'
+import Routes from './src/routes';
 
 export default function App() {
   const [fontsLoaded] = useFonts({ //const criada para verifica se as fonts ja estao carregadas
@@ -16,13 +16,13 @@ export default function App() {
   });
 
   if(!fontsLoaded){
-    <AppLoading/>// exibir uma tela antes do APP carregar...
+    return null;// exibir uma tela antes do APP carregar...
   }
 
   return (
     <>
-    <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent/>
-    <Home/>
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent/>
+      <Routes/>
     </>
   );
 }
