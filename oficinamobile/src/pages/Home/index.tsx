@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Feather as Icon} from '@expo/vector-icons' //ja vem prontos, nao precisa de install
-import { View, Image, StyleSheet, ImageBackground,Text} from 'react-native';
+import { View, Image, StyleSheet, ImageBackground,Text, TextInput, KeyboardAvoidingView, Platform} from 'react-native';
 import {RectButton } from 'react-native-gesture-handler';
 import {StackNavigationProp} from '@react-navigation/stack';
 
 
 type  RootStackParamList = {
   Home: undefined // definfido que os params são indefinidos
-  Mechanicals: undefined; 
+  Mechanicals: {
+    uf: string,
+    city: string,
+  } 
 }
 
 type mechanicalsProps = StackNavigationProp<RootStackParamList, 'Home'>;
@@ -16,29 +19,53 @@ type Props = { navigation: mechanicalsProps; };
 
 
 const Home = ({navigation}: Props) => {
+  const [uf, setUf] = useState('');
+  const [city, setCity] = useState('');
   
   return (
-    <ImageBackground 
-      source={require('../../assets/home-background.png')} 
-      style={styles.container}
-      imageStyle={{width: 274, height:368}} // style somente para o background
-    >
-      <View style={styles.main}>
-          <Image style={styles.logo} source={require('../../assets/logo.png')}/>
-          <Text style={styles.title}>Seu marketplace de Oficinas Mecânicas</Text>
-          <Text style={styles.description}> Ajudamos pessoas a encontrarem Oficinas próximas da localidade atual!</Text>
-      </View>
-      <View style={styles.footer}>
-        <RectButton style={styles.button} onPress={() => navigation.navigate('Mechanicals')}>
-          <View style={styles.buttonIcon}>
-            <Text>
-              <Icon name="arrow-right" color="#fff" size={24}></Icon>
-            </Text>
-          </View>
-          <Text style={styles.buttonText}>Entrar</Text>
-        </RectButton>
-      </View>
-    </ImageBackground>
+    <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <ImageBackground 
+        source={require('../../assets/home-background.png')} 
+        style={styles.container}
+        imageStyle={{width: 274, height:368}} // style somente para o background
+      >
+        <View style={styles.main}>
+            <Image style={styles.logo} source={require('../../assets/logo.png')}/>
+            <View>
+              <Text style={styles.title}>Seu marketplace de Oficinas Mecânicas</Text>
+              <Text style={styles.description}> Ajudamos pessoas a encontrarem Oficinas próximas da localidade atual!</Text>
+            </View>
+        </View>
+        <View style={styles.footer}>
+          <TextInput 
+            style={styles.input}
+            placeholder="Digite a UF"
+            maxLength={2}
+            autoCapitalize="characters" //deixa em caixa alta
+            autoCorrect={false}
+            value={uf}
+            onChangeText={setUf}
+          >
+        </TextInput>
+        <TextInput 
+            style={styles.input}
+            placeholder="Digite a Cidade"
+            value={city}
+            autoCorrect={false}
+            onChangeText={setCity}
+          >
+        </TextInput>
+          <RectButton style={styles.button} onPress={() => navigation.navigate('Mechanicals', {uf, city})}>
+            <View style={styles.buttonIcon}>
+              <Text>
+                <Icon name="arrow-right" color="#fff" size={24}></Icon>
+              </Text>
+            </View>
+            <Text style={styles.buttonText}>Entrar</Text>
+          </RectButton>
+        </View>
+      </ImageBackground>
+    </KeyboardAvoidingView>
     );
 }
 
