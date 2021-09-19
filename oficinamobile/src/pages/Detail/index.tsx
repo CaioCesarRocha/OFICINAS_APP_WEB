@@ -21,6 +21,7 @@ interface Params{
 interface Data{
   mechanical:{
     image: string,
+    image_url: string,
     name: string,
     email: string,
     whatsapp: string,
@@ -68,7 +69,7 @@ const Detail = ({navigation}: Props)=>{
         <TouchableOpacity onPress={handleNavigateBack}> 
           <Icon name="arrow-left" color="#34cb79" size={20}></Icon>
         </TouchableOpacity>
-        <Image style={styles.mechanicalImage} source={{uri: data.mechanical.image}}></Image>
+        <Image style={styles.mechanicalImage} source={{uri: data.mechanical.image_url}}></Image>
         <Text style={styles.mechanicalName}>{data.mechanical.name}</Text>
         <Text style={styles.mechanicalItems}>
           {data.items.map(item => item.title).join(', ')}

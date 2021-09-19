@@ -21,7 +21,7 @@ class MechanicalsController{
         const trx = await knex.transaction();
 
         const mechanical = {
-            image: 'https://images.unsplash.com/photo-1517524206127-48bbd363f3d7?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=60',
+            image: request.file?.filename,
             name,
             email,
             whatsapp,
@@ -34,7 +34,10 @@ class MechanicalsController{
 
         const mechanical_id = insertedIds[0];
 
-        const mechanicalItems = items.map((item_id:number)=>{
+        const mechanicalItems = items
+        .split(',')
+        .map((item: string) => Number(item.trim()))
+        .map((item_id:number)=>{
             return{
                 item_id,
                 mechanical_id
@@ -65,7 +68,14 @@ class MechanicalsController{
         .distinct()
         .select('mechanicals.*')
 
-        return response.json(mechanicals);
+        const serializedMechanicals = mechanicals.map(mechanical =>{
+            return {
+                ...mechanical,
+                image_url: `http://192.168.100.2:3333/uploads/${mechanical.image}`,
+            };
+        });
+
+        return response.json(serializedMechanicals);
     }
 
 
@@ -76,12 +86,18 @@ class MechanicalsController{
         if(!mechanical){
             return response.status(400).json({message: "Mechanical not found"});
         }
+
+        const serializedMechanical ={
+            ...mechanical,
+             image_url: `http://192.168.100.2:3333/uploads/${mechanical.image}`,
+        };
+
         const items = await knex('items')
         .join('mechanical_items', 'items.id', '=' , 'mechanical_items.item_id')
         .where('mechanical_items.mechanical_id', id)
         .select('items.title');
 
-        return response.json({mechanical, items});
+        return response.json({mechanical: serializedMechanical, items});
     }
 }
 

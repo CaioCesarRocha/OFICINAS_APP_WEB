@@ -6,15 +6,19 @@ import express from 'express';
 
 import MechanicalsController from './controllers/MechanicalsController';
 import ItemController from './controllers/ItemsController';
+import multer from 'multer';
+import multerConfig from './config/multer';
 
 const routes = express.Router();
+const upload = multer(multerConfig);
 
 const mechanicalsController = new MechanicalsController();
 const itemController = new ItemController();
 
 routes.get('/items', itemController.index);
 
-routes.post('/mechanicals', mechanicalsController.create);
+routes.post('/mechanicals', upload.single('image') ,mechanicalsController.create);//upload para poder enviar a foto.
+
 routes.get('/mechanicals', mechanicalsController.index);   //index quando listar todos
 routes.get('/mechanicals/:id', mechanicalsController.show); //show quando listar um item unico
 

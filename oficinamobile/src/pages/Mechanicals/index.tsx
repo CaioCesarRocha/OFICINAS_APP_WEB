@@ -29,6 +29,7 @@ interface Mechanical{
   id: number,
   name: string,
   image: string,
+  image_url: string,
   latitude: number,
   longitude: number,
 }
@@ -138,7 +139,7 @@ const Mechanicals = ({navigation}: Props) =>{
                        <View style={styles.mapMarkerContainer}>
                           <Image 
                             style={styles.mapMarkerImage} 
-                            source={{uri: mechanical.image}}
+                            source={{uri: mechanical.image_url}}
                           >             
                          </Image>
                          <Text style={styles.mapMarkerTitle}>{mechanical.name}</Text>
