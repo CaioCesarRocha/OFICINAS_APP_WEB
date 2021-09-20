@@ -1,6 +1,9 @@
 /node_modules
 /server/node_modules
+/server/uploads/*
+!/server/uploads/.gitkeep
 /oficinaweb/node_modules
 /oficinamobile/node_modules
 /oficinamobile/.expo
+*.sqlite
 
