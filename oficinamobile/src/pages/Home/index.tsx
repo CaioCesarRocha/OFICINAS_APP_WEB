@@ -76,13 +76,15 @@ const styles = StyleSheet.create({
     },
 
     logo:{
-        width: 250,
-        height: 90,
+        width: 160,
+        height: 135,
+        alignSelf: 'center',
     },
   
     main: {
       flex: 1,
       justifyContent: 'center',
+      
     },
   
     title: {
@@ -90,7 +92,7 @@ const styles = StyleSheet.create({
       fontSize: 32,
       fontFamily: 'Ubuntu_700Bold',
       maxWidth: 260,
-      marginTop: 64,
+      marginTop: 32,
     },
   
     description: {

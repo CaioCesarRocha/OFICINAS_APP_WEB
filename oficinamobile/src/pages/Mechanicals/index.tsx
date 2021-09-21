@@ -84,6 +84,7 @@ const Mechanicals = ({navigation}: Props) =>{
         }
       }).then(response =>{
         setMechanicals(response.data);
+        console.log(response.data)
       })
     }, [selectedItems]); //vai chamar toda vez que o selected items mudar
 
@@ -242,7 +243,7 @@ const styles = StyleSheet.create({
       flex: 1,
       fontFamily: 'Roboto_400Regular',
       color: '#FFF',
-      fontSize: 13,
+      fontSize: 9,
       lineHeight: 23,
     },
   

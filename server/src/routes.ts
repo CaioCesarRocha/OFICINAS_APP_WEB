@@ -23,12 +23,12 @@ routes.get('/mechanicals/:id', mechanicalsController.show); //show quando listar
 
 routes.post(
     '/mechanicals',
-    upload.single('image') , //upload para poder enviar a foto.
+    upload.single('image'), //upload para poder enviar a foto.
     celebrate({  //validação dos campos no back
         body: Joi.object().keys({
             name: Joi.string().required(),
             email: Joi.string().required().email(),
-            whatsapp: Joi.number().required(),
+            whatsapp: Joi.string().required(),
             latitude: Joi.number().required(),
             longitude: Joi.number().required(),
             city: Joi.string().required(),

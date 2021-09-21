@@ -122,7 +122,7 @@ const CreateMechanical = () =>{
         if(selectedFile){
             data.append('image', selectedFile)
         }
-        
+        console.log(latitude, longitude, whatsapp, items)
         await api.post('mechanicals', data);
 
         alert('Empresa cadastrada com sucesso!');
@@ -133,7 +133,7 @@ const CreateMechanical = () =>{
     return(
         <div id="page-create-mechanical">
             <header>
-                <img id="logo" src={logo} alt="Oficina Mecânica" />
+                <img className="logo_register" src={logo} alt="Oficina Mecânica" />
                 <Link to="/">
                 <span><FiArrowLeft/></span>
                     Voltar para Home

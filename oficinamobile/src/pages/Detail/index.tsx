@@ -42,6 +42,7 @@ const Detail = ({navigation}: Props)=>{
 
   useEffect(() => {
     api.get(`mechanicals/${routeParams.mechanical_id}`).then(response =>{
+      console.log(response.data)
       setData(response.data)
     })
   }, []);

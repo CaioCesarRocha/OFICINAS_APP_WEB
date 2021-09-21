@@ -4,7 +4,7 @@ export async function up(knex: Knex ){ //passa qual o formato da váriavel para 
     //criar a tabela
     return knex.schema.createTable('mechanical_items', table =>{
         table.increments('id').primary();
-        table.integer('mechanical_id').notNullable().references('id').inTable('mechanicals');
+        table.integer('mechanical_id').notNullable().references('id').inTable('mechanicals'); //criar chavem estrangeira
         table.integer('item_id').notNullable().references('id').inTable('items');       
     });
 }

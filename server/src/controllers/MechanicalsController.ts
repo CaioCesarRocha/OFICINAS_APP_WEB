@@ -5,7 +5,7 @@ import knex from '../database/connection';
 
 class MechanicalsController{
     async create (request: Request, response: Response){
-        // recurso de destruturação = msm que escrever name = request.body.name       
+        // recurso de destruturação = msm que escrever name = request.body.name    
         const {
             name,
             email,
@@ -53,6 +53,10 @@ class MechanicalsController{
         });
     }
 
+
+
+
+
     async index(request: Request, response: Response){
         const { city, uf, items} = request.query;
 
@@ -77,6 +81,7 @@ class MechanicalsController{
 
         return response.json(serializedMechanicals);
     }
+
 
 
     async show(request: Request, response: Response){
