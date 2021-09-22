@@ -5,7 +5,8 @@ import { TileLayer, Marker, MapContainer, useMapEvents} from 'react-leaflet';
 import axios from 'axios';
 import api from '../../services/api';
 import Dropzone from '../../components/Dropzone';
-
+import {Form, Formik} from 'formik';
+import * as Yup from "yup";
 import logo from '../../assets/logo.png';
 import './style.css';
 
@@ -24,8 +25,24 @@ interface IBGECityResponse{
     nome: string;
 }
 
+interface FormValues { //necessário para o formik
+    name: string;
+    email: string;
+    whatsapp: string;
+    city: string;
+    uf: string;
+  }
 
-const CreateMechanical = () =>{
+const schema = Yup.object().shape({ //validation com Yup
+    name: Yup.string().required('O campo Nome é obrigatório'),
+    email: Yup.string().email('Email inválido').required('O campo Email é obrigatório'),
+    whatsapp: Yup.string().required('O campo Whatsapp é obrigatório'),
+    city: Yup.string().required('Escolha uma cidade'),
+    uf: Yup.string().required('Escolha uma UF'),
+})
+
+
+const CreateMechanical : React.FC<{}> = () =>{
     const [ items, setItems] = useState<Item[]>([]);
     const [ ufs, setUfs] = useState<string[]>([]);
     const [ cities, setCities] = useState<string[]>([]);
@@ -44,6 +61,8 @@ const CreateMechanical = () =>{
 
     const history = useHistory();
 
+    const initialValues: FormValues = { name: '', email: '', whatsapp: '', city:'', uf: ''};
+
     useEffect(() => {
         api.get('items').then(response =>{
             setItems(response.data);
@@ -53,6 +72,7 @@ const CreateMechanical = () =>{
     useEffect(() => {
         axios.get<IBGEUFResponse[]>('https://servicodados.ibge.gov.br/api/v1/localidades/estados').then(response => {
             const ufInitials = response.data.map(uf => uf.sigla);
+            console.log(ufInitials)
             setUfs(ufInitials);
         });
     }, []);
@@ -101,8 +121,7 @@ const CreateMechanical = () =>{
             setSelectedItems([...selectedItems , id])
         }      
     };
-    async function handleSubmit(event: FormEvent){
-        event.preventDefault();// evita de procurar pela proxima pagina(recarregar)
+    async function handleSubmit(){
         const {name, email, whatsapp} = formData;
         const uf = selectedUf;
         const city = selectedCity;
@@ -140,115 +159,130 @@ const CreateMechanical = () =>{
                 </Link>
             </header>
 
-            <form onSubmit={handleSubmit}>
-                <h1>Cadastro da Empresa</h1>
+            <Formik
+                validationSchema={schema}
+                initialValues={initialValues}
+                onSubmit={handleSubmit}
+            >
+                {({errors}) =>(
+                    <Form>
+                        <h1>Cadastro da Empresa</h1>
 
-                <Dropzone onFileUploaded={setSelectedFile}/>
+                        <Dropzone onFileUploaded={setSelectedFile}/>
 
-                <fieldset>
-                    <legend>
-                        <h2>Dados</h2>
-                    </legend>
-                    <div className="field">
-                        <label htmlFor="name">Nome da Entidade</label>
-                        <input
-                            type="text"
-                            name="name"
-                            id="name"
-                            onChange = {handleInputChange}                       
-                        />
-                    </div>
-                    <div className="field-group">
-                        <div className="field">
-                            <label htmlFor="email">Email da Entidade</label>
-                            <input
-                                type="email"
-                                name="email"
-                                id="email"
-                                onChange = {handleInputChange}                         
-                            />
-                        </div>                 
-                        <div className="field">
-                        <label htmlFor="whatsapp">Whatsapp</label>
-                            <input
-                                type="text"
-                                name="whatsapp"
-                                id="whatsapp"
-                                onChange = {handleInputChange}                         
-                            />
-                        </div>
-                    </div>
-                </fieldset>
+                        <fieldset>
+                            <legend>
+                                <h2>Dados</h2>
+                            </legend>
+                            <div className="field">
+                                <label htmlFor="name">Nome da Entidade</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    id="name"
+                                    onChange = {handleInputChange}                       
+                                />
+                                {errors.name &&(<div className="errorsForm">{errors.name}</div>)}
+                            </div>
 
-                <fieldset>
-                    <legend>
-                        <h2>Endereço</h2>
-                        <span>Selecione o Endereço do Mapa</span>
-                    </legend>
-                    <MapContainer center={[-18.5913406,-46.5258909]} zoom={15}>
-                        <TileLayer
-                            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        />
-                        <LocationMarker/> 
-                        <Marker position={selectedPosition}/>
-                    </MapContainer>
+                            <div className="field-group">
+                                <div className="field">
+                                    <label htmlFor="email">Email da Entidade</label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        id="email"
+                                        onChange = {handleInputChange}                                                               
+                                    />
+                                    {errors.email &&(<div className="errorsForm">{errors.email}</div>)} 
+                                </div>                 
+                                <div className="field">
+                                    <label htmlFor="whatsapp">Whatsapp</label>
+                                    <input
+                                        type="text"
+                                        name="whatsapp"
+                                        id="whatsapp"
+                                        onChange = {handleInputChange}
+                                    />
+                                    {errors.whatsapp &&(<div className="errorsForm">{errors.whatsapp}</div>)}                         
+                                </div>
+                            </div>
+                        </fieldset>
 
-                    <div className="field-group">
-                        <div className="field">
-                            <label htmlFor="uf">Estado - UF</label>
-                            <select 
-                                name="uf" 
-                                id="uf" 
-                                value={selectedUf}  
-                                onChange={handleSelectUf}
-                            >
-                                <option value="0">Selecione uma UF</option>
-                                {ufs.map(uf =>(
-                                    <option key={uf} value={uf}>{uf}</option>
-                                ))};
-                            </select>
-                        </div>
-                        <div className="field">
-                            <label htmlFor="city">Cidade</label>
-                            <select 
-                                name="city" 
-                                id="city" 
-                                value={selectedCity} 
-                                onChange={handleSelectCity}
-                            >
-                                <option value="0">Selecione um Ciddade</option>
-                                {cities.map(city =>(
-                                    <option key={city} value={city}>{city}</option>
-                                ))};
-                            </select>
-                        </div>
-                    </div>
-                </fieldset>
+                        <fieldset>
+                            <legend>
+                                <h2>Endereço</h2>
+                                <span>Selecione o Endereço do Mapa</span>
+                            </legend>
+                            <MapContainer center={[-18.5913406,-46.5258909]} zoom={15}>
+                                <TileLayer
+                                    attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                />
+                                <LocationMarker/> 
+                                <Marker position={selectedPosition}/>
+                            </MapContainer>
 
-                <fieldset>
-                    <legend>
-                        <h2>Itens Trabalhados</h2>
-                        <span>Selecione um ou mais itens abaixo</span>
-                    </legend>
-                    <ul className="items-grid">
-                        {items.map(item => (
-                            <li 
-                                key={item.id}
-                                onClick={ () => handleSelectItem(item.id)}
-                                className={selectedItems.includes(item.id) ? 'selected' : ''}
-                            >
-                                <img src={item.image_url} alt={item.title} id="componentes"/>
-                                <span>{item.title}</span>
-                            </li>
-                        ))}                   
-                    </ul>
-                </fieldset>
+                            <div className="field-group">
+                                <div className="field">
+                                    <label htmlFor="uf">Estado - UF</label>
+                                    <select 
+                                        name="uf" 
+                                        id="uf" 
+                                        value={selectedUf}  
+                                        onChange={handleSelectUf}
+                                    >
+                                        <option value="0">Selecione uma UF</option>
+                                        {ufs.map(uf =>(
+                                            <option key={uf} value={uf}>{uf}</option>
+                                        ))};
+                                    </select>
+                                    {errors.uf &&(<div className="errorsForm">{errors.uf}</div>)}
+                                </div>
+                                <div className="field">
+                                    <label htmlFor="city">Cidade</label>
+                                    <select 
+                                        name="city" 
+                                        id="city" 
+                                        value={selectedCity} 
+                                        onChange={handleSelectCity}
+                                    >
+                                        <option value="0">Selecione um Ciddade</option>
+                                        {cities.map(city =>(
+                                            <option key={city} value={city}>{city}</option>
+                                        ))};
+                                    </select>
+                                    {errors.city &&(<div className="errorsForm">{errors.city}</div>)}
+                                </div>
+                            </div>
+                        </fieldset>
 
-                <button type="submit">
-                    Cadastrar Empresa
-                </button>
-            </form>          
+                        <fieldset>
+                            <legend>
+                                <h2>Itens Trabalhados</h2>
+                                <span>Selecione um ou mais itens abaixo</span>
+                            </legend>
+                            <ul className="items-grid">
+                                {items.map(item => (
+                                    <li 
+                                        key={item.id}
+                                        onClick={ () => handleSelectItem(item.id)}
+                                        className={selectedItems.includes(item.id) ? 'selected' : ''}
+                                    >
+                                        <img src={item.image_url} alt={item.title} id="componentes"/>
+                                        <span>{item.title}</span>
+                                    </li>
+                                ))}                  
+                            </ul>
+                        </fieldset>
+
+                        <button type="submit" onClick={handleSubmit} >
+                            Cadastrar Empresa
+                        </button>
+                    </Form>
+                )}
+            </Formik>
+    
         </div>
     );
 }

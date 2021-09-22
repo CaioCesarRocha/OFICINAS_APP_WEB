@@ -35,8 +35,8 @@ interface Mechanical{
 }
 
 interface Params{
-  uf: string,
-  city: string,
+  selectedUf: string,
+  selectedCity: string,
 }
 
 const Mechanicals = ({navigation}: Props) =>{
@@ -78,8 +78,8 @@ const Mechanicals = ({navigation}: Props) =>{
     useEffect(() => {
       api.get('mechanicals',{
         params:{
-          city: routeParams.city,
-          uf: routeParams.uf,
+          city: routeParams.selectedCity,
+          uf: routeParams.selectedUf,
           items: selectedItems
         }
       }).then(response =>{

@@ -57,19 +57,19 @@ class MechanicalsController{
 
 
 
-    async index(request: Request, response: Response){
+    async index(request: Request, response: Response){//filtro por items, city e uf
         const { city, uf, items} = request.query;
 
-        const parsedItems = String(items)
+        const parsedItems = String(items) //converter os items do formato string para array
         .split(',')
         .map(item => Number(item.trim()))
 
         const mechanicals = await knex('mechanicals')
         .join('mechanical_items', 'mechanicals.id', '=', 'mechanical_items.mechanical_id')
-        .whereIn('mechanical_items.item_id', parsedItems)
+        .whereIn('mechanical_items.item_id', parsedItems) //se tem id dentro do parsedItems
         .where('city', String(city))
         .where('uf', String(uf))
-        .distinct()
+        .distinct()         //retornar somente ids distintos
         .select('mechanicals.*')
 
         const serializedMechanicals = mechanicals.map(mechanical =>{
@@ -84,7 +84,7 @@ class MechanicalsController{
 
 
 
-    async show(request: Request, response: Response){
+    async show(request: Request, response: Response){ //listagem unico mechanical
         const {id} = request.params;
         const mechanical = await knex('mechanicals').where('id', id).first()
 
