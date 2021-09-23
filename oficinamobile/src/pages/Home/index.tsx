@@ -1,9 +1,9 @@
 import React, { useState, ChangeEvent, useEffect}  from 'react';
 import { Feather as Icon} from '@expo/vector-icons' //ja vem prontos, nao precisa de install
-import { View, Image, StyleSheet, ImageBackground,Text, TextInput, KeyboardAvoidingView, Platform} from 'react-native';
+import { View, Image, StyleSheet, ImageBackground,Text, KeyboardAvoidingView, Platform} from 'react-native';
 import {RectButton } from 'react-native-gesture-handler';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {Picker} from '@react-native-picker/picker';
+import PickerComponent from '../../components/Picker';
 import axios from 'axios';
 
 
@@ -32,14 +32,15 @@ const Home = ({navigation}: Props) => {
   const [ufs, setUfs] = useState<string[]>([]);
   const [citys, setCities] = useState<string[]>([])
 
-  const [selectedUf, setSelectedUf] = useState('Selcione a UF');
+  const [selectedUf, setSelectedUf] = useState('Selecione a UF');
   const [selectedCity, setSelectedCity] = useState('Selecione a Cidade');
 
 
   useEffect(() => {
     axios.get<IBGEUFResponse[]>('https://servicodados.ibge.gov.br/api/v1/localidades/estados').then(response => {
-        const ufInitials = response.data.map(uf => uf.sigla); 
-        console.log(ufInitials)      
+        const ufInitials = response.data.map(uf => uf.sigla);
+        ufInitials.sort()
+        console.log(ufInitials) 
         setUfs(ufInitials);          
     });
     
@@ -57,6 +58,7 @@ const Home = ({navigation}: Props) => {
   }, [selectedUf]);
 
 
+
   return (
     <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ImageBackground 
@@ -70,35 +72,20 @@ const Home = ({navigation}: Props) => {
               <Text style={styles.title}>Seu marketplace de Oficinas Mecânicas</Text>
               <Text style={styles.description}> Ajudamos pessoas a encontrarem Oficinas próximas da localidade atual!</Text>
             </View>
-          <View style={styles.footer}>
-            <View>
-              <Picker
-                style={styles.picker}            
-                selectedValue={selectedUf}
-                onValueChange={(itemValue) => setSelectedUf(itemValue)}
-              >
-                <Picker.Item label={'Selecione a UF'} value={'0'}/>
-                {
-                  ufs.map((item, index) => {
-                    return <Picker.Item value={item} label={item} key={index} />
-                  })
-                }          
-              </Picker>
 
-              <Picker
-                style={styles.picker}            
-                selectedValue={selectedCity}
-                onValueChange={(itemValue) => setSelectedCity(itemValue)}
-              >
-                <Picker.Item label={'Selecione a City'} value={'0'}/>
-                {
-                  citys.map((item, index) => {
-                    return <Picker.Item value={item} label={item} key={index} />
-                  })
-                }          
-              </Picker>
-              
-            </View>
+          <View style={styles.footer}>           
+            <PickerComponent
+              listaItens={ufs}
+              valueSelected={selectedUf}
+              field='UF'
+              action={setSelectedUf}
+            />
+             <PickerComponent
+              listaItens={citys}
+              valueSelected={selectedCity}
+              field= {'Cidade'}
+              action={setSelectedCity}
+            />
           </View>
         
           <RectButton style={styles.button} onPress={() => navigation.navigate('Mechanicals', {selectedUf, selectedCity})}>
@@ -152,17 +139,6 @@ const styles = StyleSheet.create({
   
     footer: {
       marginTop: 30,
-    },
-  
-    select: {},
-
-    picker:{
-      height: 60,
-      backgroundColor: '#FFF',
-      borderRadius: 10,
-      marginBottom: 8,
-      paddingHorizontal: 24,
-      fontSize: 16,
     },
   
   

@@ -5,7 +5,7 @@ import './styles.css';
 
 
 interface Props{
-    onFileUploaded: (file: File) => void;
+  onFileUploaded: (file: File) => void;
 }
 
 const Dropzone: React.FC<Props>= ({onFileUploaded}) => {
@@ -34,10 +34,10 @@ const Dropzone: React.FC<Props>= ({onFileUploaded}) => {
             <img src={selectedFileUrl} alt = "Mechanical thumbnail"/>
             :
             (
-                <p>
+              <p>
                 <FiUpload/>
                 Imagem do Estabelecimento
-                </p>
+              </p>
             )
         }        
     </div>
