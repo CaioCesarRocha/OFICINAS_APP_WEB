@@ -3,16 +3,16 @@ Criar um aplicativo usando react native para usuários localizarem estas oficina
 
 Tecnologias usadas:
 
-Web: React(TypeScript)
--> react-router-dom: navegação (BrowserRouter, Link, useHistory)
+Web: React(TypeScript).
+-> react-router-dom: navegação (BrowserRouter, Link, useHistory).
 ->leaflet & react-leaflet: mapa escolhido para ser usado na web;
-->react-icons
-->axios: para alimentar a aplicação com a api local(items) e com api do IBGE(informando os dados da citye  uf)
-->formik e yup: para validação do formulário no frontend
-->react-dropzone: campo para arrastar arquivos(no caso, somente uma foto do estabelecimento)
+->react-icons.
+->axios: para alimentar a aplicação com a api local(items) e com api do IBGE(informando os dados da citye  uf).
+->formik e yup: para validação do formulário no frontend.
+->react-dropzone: campo para arrastar arquivos(no caso, somente uma foto do estabelecimento).
 
-Mobile: React Native(TypeScript)
-->Expo
+Mobile: React Native(TypeScript).
+->Expo.
 ->react-native-maps: usar o mapa no mobile;
 ->@react-navigation/native && @react-navigation/stack: lidar com navegação;
 ->expo install react-native-screens && react-native-safe-area-context;
