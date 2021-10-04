@@ -3,7 +3,7 @@ Criar um aplicativo usando react native para usuários localizarem estas oficina
 
 Tecnologias usadas:
 
-Web: React(TypeScript)
+WEB: React(TypeScript)
 
 -> react-router-dom: navegação (BrowserRouter, Link, useHistory)
 
@@ -18,7 +18,7 @@ Web: React(TypeScript)
 ->react-dropzone: campo para arrastar arquivos(no caso, somente uma foto do estabelecimento).
 
 
-Mobile: React Native(TypeScript)
+MOBILE: React Native(TypeScript)
 
 ->Expo.
 
@@ -39,7 +39,7 @@ Mobile: React Native(TypeScript)
 ->expo install expo-mail-composer: poder abrir o email diretamente do aplicativo;
 
 
-Backend: Node.js
+BACKEND: Node.js
 
 -express: lidar com rotas
 
