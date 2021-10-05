@@ -55,12 +55,12 @@ const Detail = ({navigation}: Props)=>{
   }
   function handleComposeMail(){
     MailComposer.composeAsync({
-      subject: 'Interesse nos serviços da Oficina',
+      subject: 'Interesse nos serviços da Oficina', //deixa assunto setado
       recipients: [data.mechanical.email]
     });
   }
 
-  if(!data.mechanical){
+  if(!data.mechanical){ //exibe nada antes de carregar o data. Ideal era tela de loading.
     return null
   }
 

@@ -56,7 +56,6 @@ class MechanicalsController{
 
 
 
-
     async index(request: Request, response: Response){//filtro por items, city e uf
         const { city, uf, items} = request.query;
 
@@ -72,7 +71,7 @@ class MechanicalsController{
         .distinct()         //retornar somente ids distintos
         .select('mechanicals.*')
 
-        const serializedMechanicals = mechanicals.map(mechanical =>{
+        const serializedMechanicals = mechanicals.map(mechanical =>{ //retornar no formato correto
             return {
                 ...mechanical,
                 image_url: `http://192.168.100.2:3333/uploads/${mechanical.image}`,

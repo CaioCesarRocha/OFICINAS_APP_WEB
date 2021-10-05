@@ -51,13 +51,13 @@ const Mechanicals = ({navigation}: Props) =>{
 
     useEffect(() => {
       async function loadPosition(){
-        const {status} = await Location.requestForegroundPermissionsAsync();
+        const {status} = await Location.requestForegroundPermissionsAsync(); // pede permissao ao user
 
         if(status !== 'granted'){
           Alert.alert('Ooops...', 'Precisamos da sua permissão para obter a localização')
           return;
         }
-        const location = await Location.getCurrentPositionAsync();
+        const location = await Location.getCurrentPositionAsync();//posicao atual do user
 
         const { latitude, longitude} = location.coords;
 
@@ -116,10 +116,10 @@ const Mechanicals = ({navigation}: Props) =>{
              
             <Text style={styles.description}>Encontre no mapa a Oficina mais próxima!</Text> 
             <View style={styles.mapContainer}>
-                { initialPosition[0] !== 0 && (
+                { initialPosition[0] !== 0 && ( //se for 0 nao exibe
                   <MapView 
                     style={styles.map}
-                    loadingEnabled={initialPosition[0]===0} 
+                    loadingEnabled={initialPosition[0]===0} //exibe o loading enquando n pegar posicao
                     initialRegion={{
                       latitude: initialPosition[0], 
                       longitude: initialPosition[1],

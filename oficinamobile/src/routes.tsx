@@ -1,12 +1,11 @@
 import React from "react";
-import { View, Image, StyleSheet, ImageBackground,Text, Button} from 'react-native';
 import {NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import Home from './pages/Home';
 import Mechanicals from './pages/Mechanicals';
 import Detail from './pages/Detail';
-import App from "../App";
+
 
 export type  RootStackParamList = {
     Home: undefined;
