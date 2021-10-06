@@ -1,4 +1,4 @@
-import React , {useEffect, useState, ChangeEvent, FormEvent} from 'react';
+import React , {useEffect, useState, ChangeEvent} from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { FiArrowLeft} from 'react-icons/fi';
 import { TileLayer, Marker, MapContainer, useMapEvents} from 'react-leaflet';
@@ -31,7 +31,7 @@ interface FormValues { //necessário para o formik
     whatsapp: string;
     city: string;
     uf: string;
-  }
+}
 
 const schema = Yup.object().shape({ //validation com Yup
     name: Yup.string().required('O campo Nome é obrigatório'),
