@@ -33,6 +33,8 @@ interface FormValues { //necessário para o formik
     uf: string;
 }
 
+
+
 const schema = Yup.object().shape({ //validation com Yup
     name: Yup.string().required('O campo Nome é obrigatório'),
     email: Yup.string().email('Email inválido').required('O campo Email é obrigatório'),
@@ -141,7 +143,6 @@ const CreateMechanical : React.FC<{}> = () =>{
         if(selectedFile){
             data.append('image', selectedFile)
         }
-        console.log(latitude, longitude, whatsapp, items)
         await api.post('mechanicals', data);
 
         alert('Empresa cadastrada com sucesso!');

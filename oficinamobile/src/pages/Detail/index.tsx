@@ -9,8 +9,8 @@ import * as MailComposer from 'expo-mail-composer';
 
 
 type  RootStackParamList = {
-    Detail: undefined; 
-  }
+  Detail: undefined; 
+}
 type pageProps = StackNavigationProp<RootStackParamList, 'Detail'>;
   
 type Props = { navigation: pageProps; };

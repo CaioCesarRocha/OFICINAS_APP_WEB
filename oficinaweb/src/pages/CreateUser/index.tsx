@@ -19,9 +19,7 @@ const schema = Yup.object().shape({ //validation com Yup
 })
 
 
-
 const CreateUser = () =>{
-
     const [ formData, setFormData] = useState({
         email: "",
         senha: "",
