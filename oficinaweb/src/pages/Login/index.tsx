@@ -1,34 +1,26 @@
 import React, {useEffect, useState, ChangeEvent} from 'react';
 import {Form, Formik} from 'formik';
 import * as Yup from "yup";
+import { Link, useHistory, useParams, useRouteMatch} from 'react-router-dom';
 import {GoogleLogin, GoogleLogout, GoogleLoginResponse, GoogleLoginResponseOffline} from 'react-google-login';
+import api from '../../services/api';
 
 import logo from '../../assets/logo.png';
 import './style.css';
+
+
 
 
 interface FormValues { //necessário para o formik
     email: string;
     senha: string;
 }
-
-
+  
 const schema = Yup.object().shape({ //validation com Yup
     email: Yup.string().email('Email inválido').required('O campo Email é obrigatório'),
     senha: Yup.string().required('O campo senha é obrigatório').min(6)
 })
 
-
-interface teste{
-    profileObj:{
-        email: string,
-        familyName: string,
-        givenName: string,
-        googleId: number,
-        imageUrl: string,
-        name: string
-    }
-}
 
 
 const Login : React.FC<[]> = () =>{
@@ -36,6 +28,7 @@ const Login : React.FC<[]> = () =>{
         email: "",
         senha: "",
     })
+ 
 
     const initialValues: FormValues = { email: '', senha: ''};
 
@@ -44,24 +37,52 @@ const Login : React.FC<[]> = () =>{
         setFormData({...formData, [name]:value }) //copia tudo que ja tem la dentro pra evitar de um apagar o outro
     };
 
-    
-    function loginSuccess(response: GoogleLoginResponse | GoogleLoginResponseOffline ) {
-        if  ( "profileObj"  in  response )  { 
-            console.log(response.profileObj )  // funciona bem 
-        }
+
+    async function loginSuccess(response: GoogleLoginResponse | GoogleLoginResponseOffline ) {
+        if ("profileObj" in  response)  { 
+            const token_id = response.tokenId
+            await api.post('login', {
+                params:{
+                  id: routeParams.tokenId
+                }
+            });
+            console.log(routeParams)           
+            refreshTokenSetup(response)
+        }       
     }
     const loginFailure = () =>{
         console.log('Fail');
     }
     const logoutSuccess = () => {      
-        console.log('Success');
+        console.log('Deslogado com sucesso!');
     }
     const logoutFailure = () =>{
         console.log('Fail');
     }
+    function refreshTokenSetup(response: GoogleLoginResponse | GoogleLoginResponseOffline) {
+        if ("tokenObj" in  response)  {
+            let refreshTiming = (response.tokenObj.expires_in || 3600 - 5 * 60) * 1000;
+
+            const refreshToken = async () => {
+                const newAuthRes = await response.reloadAuthResponse();
+
+                refreshTiming = (newAuthRes.expires_in || 3600 - 5 * 60) * 1000;
+                console.log('newAuthRes:', newAuthRes);
+                // saveUserToken(newAuthRes.access_token);  <-- save new token
+                localStorage.setItem('authToken', newAuthRes.id_token);
+
+                // Setup the other timer after the first one
+                setTimeout(refreshToken, refreshTiming);
+            };
+            // Setup first refresh timer
+            setTimeout(refreshToken, refreshTiming);
+        }
+    }
+
 
     async function handleSubmit(){      
     };
+
 
     return(
         <div id="page-login">

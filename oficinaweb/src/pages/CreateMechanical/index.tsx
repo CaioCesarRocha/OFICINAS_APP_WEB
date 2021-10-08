@@ -1,5 +1,5 @@
 import React , {useEffect, useState, ChangeEvent} from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useParams} from 'react-router-dom';
 import { FiArrowLeft} from 'react-icons/fi';
 import { TileLayer, Marker, MapContainer, useMapEvents} from 'react-leaflet';
 import axios from 'axios';

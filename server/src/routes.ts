@@ -6,6 +6,7 @@ import express from 'express';
 
 import MechanicalsController from './controllers/MechanicalsController';
 import ItemController from './controllers/ItemsController';
+import LoginController from './controllers/LoginController';
 import multer from 'multer';
 import multerConfig from './config/multer';
 import { celebrate, Joi} from 'celebrate';
@@ -15,6 +16,7 @@ const upload = multer(multerConfig);
 
 const mechanicalsController = new MechanicalsController();
 const itemController = new ItemController();
+const loginController = new LoginController();
 
 routes.get('/items', itemController.index);
 
@@ -40,5 +42,7 @@ routes.post(
     }),
     mechanicalsController.create
 );
+
+routes.post('/login',loginController.update);
 
 export default routes;

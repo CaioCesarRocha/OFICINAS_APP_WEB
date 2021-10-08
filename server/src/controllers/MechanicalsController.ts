@@ -5,7 +5,9 @@ import knex from '../database/connection';
 
 class MechanicalsController{
     async create (request: Request, response: Response){
-        // recurso de destruturação = msm que escrever name = request.body.name    
+        // recurso de destruturação = msm que escrever name = request.body.name 
+        
+        console.log(response)
         const {
             name,
             email,
@@ -16,7 +18,7 @@ class MechanicalsController{
             uf,
             items
         } = request.body;
-    
+
         //evitar que caso a segunda operação de errado, por nao ter vinculo com a outra, insera dados errados no banco
         const trx = await knex.transaction();
 
@@ -52,7 +54,6 @@ class MechanicalsController{
             ...mechanical,
         });
     }
-
 
 
 
