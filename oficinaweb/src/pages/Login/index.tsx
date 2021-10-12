@@ -1,7 +1,7 @@
 import React, {useEffect, useState, ChangeEvent} from 'react';
 import {Form, Formik} from 'formik';
 import * as Yup from "yup";
-import { Link, useHistory, useParams, useRouteMatch} from 'react-router-dom';
+import { Link, useHistory} from 'react-router-dom';
 import {GoogleLogin, GoogleLogout, GoogleLoginResponse, GoogleLoginResponseOffline} from 'react-google-login';
 import api from '../../services/api';
 
@@ -9,12 +9,20 @@ import logo from '../../assets/logo.png';
 import './style.css';
 
 
-
+const clienteID = '656590032305-hrpslkedjq2u6g1hc9bu1al7tv55drlr.apps.googleusercontent.com';
 
 interface FormValues { //necessário para o formik
     email: string;
     senha: string;
 }
+
+interface dataLogin{
+    sub: string;
+    email: string;
+    name: string;
+    picture: string;
+}
+
   
 const schema = Yup.object().shape({ //validation com Yup
     email: Yup.string().email('Email inválido').required('O campo Email é obrigatório'),
@@ -24,6 +32,7 @@ const schema = Yup.object().shape({ //validation com Yup
 
 
 const Login : React.FC<[]> = () =>{
+    const [dataLogin ,setDataLogin] = useState<dataLogin[]>([]);
     const [ formData, setFormData] = useState({
         email: "",
         senha: "",
@@ -40,13 +49,23 @@ const Login : React.FC<[]> = () =>{
 
     async function loginSuccess(response: GoogleLoginResponse | GoogleLoginResponseOffline ) {
         if ("profileObj" in  response)  { 
-            const token_id = response.tokenId
-            await api.post('login', {
-                params:{
-                  id: routeParams.tokenId
+            console.log("achei prpofile")
+            const token_id = response.tokenId          
+            const tokens = []
+            tokens.push({id: token_id})                              
+            const token = JSON.stringify(tokens);       
+
+            await api.post('login', token, {
+                headers: {
+                  'Content-Type': 'application/json'
                 }
+            }).then(response =>{
+                setDataLogin(response.data);
+                console.log(response.data)
             });
-            console.log(routeParams)           
+            //res.data.data; // '{"answer":42}'
+            //res.data.headers['Content-Type']; // 'application/json',
+            //console.log(res)        
             refreshTokenSetup(response)
         }       
     }
@@ -128,9 +147,7 @@ const Login : React.FC<[]> = () =>{
                                 onSuccess={loginSuccess}
                                 onFailure={loginFailure}
                                 cookiePolicy={'single_host_origin'}
-                                isSignedIn={true}
-                                accessType={'code'}
-                                responseType={'code'}                             
+                                isSignedIn={false}                          
                             />
                         </div>  
                         <div className="google_login">

@@ -43,6 +43,6 @@ routes.post(
     mechanicalsController.create
 );
 
-routes.post('/login',loginController.update);
+routes.post('/login', loginController.update);
 
 export default routes;
