@@ -9,7 +9,7 @@ import logo from '../../assets/logo.png';
 import './style.css';
 
 
-const clienteID = '656590032305-hrpslkedjq2u6g1hc9bu1al7tv55drlr.apps.googleusercontent.com';
+
 
 interface FormValues { //necessário para o formik
     email: string;
