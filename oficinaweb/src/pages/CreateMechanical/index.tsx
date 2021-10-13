@@ -155,7 +155,7 @@ const CreateMechanical : React.FC<{}> = () =>{
             <header>
                 <img className="logo_register" src={logo} alt="Oficina Mecânica" />
                 <Link to="/">
-                <span><FiArrowLeft/></span>
+                    <span><FiArrowLeft/></span>
                     Voltar para Home
                 </Link>
             </header>

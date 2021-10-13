@@ -61,11 +61,7 @@ const Login : React.FC<[]> = () =>{
                 }
             }).then(response =>{
                 setDataLogin(response.data);
-                console.log(response.data)
-            });
-            //res.data.data; // '{"answer":42}'
-            //res.data.headers['Content-Type']; // 'application/json',
-            //console.log(res)        
+            });     
             refreshTokenSetup(response)
         }       
     }
