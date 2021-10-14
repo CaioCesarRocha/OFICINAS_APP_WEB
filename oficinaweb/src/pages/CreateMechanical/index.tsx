@@ -1,5 +1,5 @@
 import React , {useEffect, useState, ChangeEvent} from 'react';
-import { Link, useHistory, useParams} from 'react-router-dom';
+import { Link, useHistory, useLocation} from 'react-router-dom';
 import { FiArrowLeft} from 'react-icons/fi';
 import { TileLayer, Marker, MapContainer, useMapEvents} from 'react-leaflet';
 import axios from 'axios';
@@ -10,6 +10,14 @@ import * as Yup from "yup";
 import logo from '../../assets/logo.png';
 import './style.css';
 
+
+
+interface Location{  
+    logged: boolean;
+    name: string;
+    email: string;
+    avatar: string;
+}
 
 interface Item{  //Necessário declarar o tipo de dado que esta sendo carregado
     id: number,
@@ -62,33 +70,61 @@ const CreateMechanical : React.FC<{}> = () =>{
     const [selectedFile, setSelectedFile] = useState<File>();
 
     const history = useHistory();
+    const location = useLocation<Location>();
 
     const initialValues: FormValues = { name: '', email: '', whatsapp: '', city:'', uf: ''};
 
     useEffect(() => {
+        try{
+            if(location.state.logged === false){
+                alert('É necessário estar logado para concluir o cadastro!');
+                history.push('/login');
+            }
+            else{
+                getItems();
+                getUfs();
+                getCitys();
+            }
+        }
+        catch{}
+            
+    }, [selectedUf]);
+
+    function getItems(){
         api.get('items').then(response =>{
             setItems(response.data);
         })
-    }, []);
+    }
 
-    useEffect(() => {
+    function getUfs(){
         axios.get<IBGEUFResponse[]>('https://servicodados.ibge.gov.br/api/v1/localidades/estados').then(response => {
             const ufInitials = response.data.map(uf => uf.sigla);
             console.log(ufInitials)
             setUfs(ufInitials);
         });
-    }, []);
+    }
 
-    useEffect(() => {// necessário carregar as citys sempre que a UF mudar
+    function getCitys(){
+
         if(selectedUf === '0'){
-            return;
+             return;
         }
         axios.get<IBGECityResponse[]>(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selectedUf}/municipios`)
         .then(response => {
             const cityNames = response.data.map(city=> city.nome);
             setCities(cityNames);
         });
-    }, [selectedUf]);
+    }
+
+    useEffect(() => {
+        
+    }, []);
+
+    useEffect(() => {
+        
+    }, []);
+
+    
 
 
     function handleSelectUf(event: ChangeEvent<HTMLSelectElement>){
@@ -146,7 +182,7 @@ const CreateMechanical : React.FC<{}> = () =>{
         await api.post('mechanicals', data);
 
         alert('Empresa cadastrada com sucesso!');
-        history.push('/');
+        history.push('/')
     };
     
 
@@ -154,7 +190,12 @@ const CreateMechanical : React.FC<{}> = () =>{
         <div id="page-create-mechanical">
             <header>
                 <img className="logo_register" src={logo} alt="Oficina Mecânica" />
-                <Link to="/">
+                <Link
+                    to={{
+                        pathname: "/", 
+                        state: { name: location.state.name, email: location.state.email, avatar: location.state.avatar}
+                    }}
+                >
                     <span><FiArrowLeft/></span>
                     Voltar para Home
                 </Link>

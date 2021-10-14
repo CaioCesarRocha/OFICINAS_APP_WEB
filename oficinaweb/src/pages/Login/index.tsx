@@ -1,26 +1,19 @@
-import React, {useEffect, useState, ChangeEvent} from 'react';
+import React, { useState, ChangeEvent} from 'react';
 import {Form, Formik} from 'formik';
 import * as Yup from "yup";
-import { Link, useHistory} from 'react-router-dom';
+import { useHistory} from 'react-router-dom';
 import {GoogleLogin, GoogleLogout, GoogleLoginResponse, GoogleLoginResponseOffline} from 'react-google-login';
-import api from '../../services/api';
 
+import api from '../../services/api';
 import logo from '../../assets/logo.png';
 import './style.css';
 
 
-const clienteID = '656590032305-hrpslkedjq2u6g1hc9bu1al7tv55drlr.apps.googleusercontent.com';
+
 
 interface FormValues { //necessário para o formik
     email: string;
     senha: string;
-}
-
-interface dataLogin{
-    sub: string;
-    email: string;
-    name: string;
-    picture: string;
 }
 
   
@@ -32,14 +25,14 @@ const schema = Yup.object().shape({ //validation com Yup
 
 
 const Login : React.FC<[]> = () =>{
-    const [dataLogin ,setDataLogin] = useState<dataLogin[]>([]);
     const [ formData, setFormData] = useState({
         email: "",
         senha: "",
     })
  
-
     const initialValues: FormValues = { email: '', senha: ''};
+
+    const history = useHistory();
 
     function handleInputChange(event: ChangeEvent<HTMLInputElement>){
         const {name, value} = event.target
@@ -48,21 +41,28 @@ const Login : React.FC<[]> = () =>{
 
 
     async function loginSuccess(response: GoogleLoginResponse | GoogleLoginResponseOffline ) {
-        if ("profileObj" in  response)  { 
-            console.log("achei prpofile")
+        if ("profileObj" in  response)  {             
+            const Name = response.profileObj.name
+            const Avatar = response.profileObj.imageUrl
+            const Email = response.profileObj.email
             const token_id = response.tokenId          
             const tokens = []
             tokens.push({id: token_id})                              
-            const token = JSON.stringify(tokens);       
-
+            const token = JSON.stringify(tokens);
+                 
             await api.post('login', token, {
                 headers: {
                   'Content-Type': 'application/json'
                 }
-            }).then(response =>{
-                setDataLogin(response.data);
             });     
-            refreshTokenSetup(response)
+            refreshTokenSetup(response);
+
+            alert(`'Usuário ${Name} logado!'`);
+
+            history.push({
+                pathname: '/',
+                state: {name: Name, avatar: Avatar, email: Email}
+            })
         }       
     }
     const loginFailure = () =>{
@@ -82,7 +82,7 @@ const Login : React.FC<[]> = () =>{
                 const newAuthRes = await response.reloadAuthResponse();
 
                 refreshTiming = (newAuthRes.expires_in || 3600 - 5 * 60) * 1000;
-                console.log('newAuthRes:', newAuthRes);
+                
                 // saveUserToken(newAuthRes.access_token);  <-- save new token
                 localStorage.setItem('authToken', newAuthRes.id_token);
 

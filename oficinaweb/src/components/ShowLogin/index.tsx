@@ -5,33 +5,28 @@ import './styles.css';
 
 
 interface Props{
-    sub: string;
-    name: string;
-    email: string;
-    image: string;
+    name: string | undefined;
+    email: string | undefined;
+    avatar: string | undefined;
 }
 
-const ShowLogin: React.FC<Props>= ({sub, name, email, image}) => {
 
-const [subs, setSubs] = useState('');
-const [names, setNames] = useState('');
-const [emails, setEmails] = useState('');
-const [images, setImages] = useState('');
-
-const url = 'https://lh3.googleusercontent.com/a/AATXAJxrg30A1SrRNR93A_RaPHtktt_G73vUJ8YZsgZU=s96-c';
+const ShowLogin: React.FC<Props>= ({name, email, avatar}) => {
+const [names, setNames] = useState<string|undefined>();
+const [emails, setEmails] = useState<string|undefined>();
+const [images, setImages] = useState<string|undefined>();
 
 useEffect(() => {
-    setSubs(sub);
     setNames(name);
     setEmails(email);
-    setImages(image);
+    setImages(avatar);
 }, []);
 
     return(       
         <div id="login">           
             <Link to="/login">
-                <img src={url}/>
-                <text>{subs}</text>
+                <img src={images}/>
+                <span className="text">{names}</span>
             </Link>          
         </div>
     );

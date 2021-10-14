@@ -24,7 +24,6 @@ class LoginController{
       const payload = ticket.getPayload();
       console.log(`${payload?.name} verified`)
       const {sub, email, name, picture} = payload as Payload;
-      console.log(sub, email, name, picture)
       
       return response.json({
         sub: sub,
