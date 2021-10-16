@@ -3,10 +3,11 @@ import { Link, useHistory, useLocation} from 'react-router-dom';
 import { FiArrowLeft} from 'react-icons/fi';
 import { TileLayer, Marker, MapContainer, useMapEvents} from 'react-leaflet';
 import axios from 'axios';
-import api from '../../services/api';
 import Dropzone from '../../components/Dropzone';
 import {Form, Formik} from 'formik';
 import * as Yup from "yup";
+
+import api from '../../services/api';
 import logo from '../../assets/logo.png';
 import './style.css';
 
@@ -40,7 +41,6 @@ interface FormValues { //necessário para o formik
     city: string;
     uf: string;
 }
-
 
 
 const schema = Yup.object().shape({ //validation com Yup
@@ -115,17 +115,7 @@ const CreateMechanical : React.FC<{}> = () =>{
             setCities(cityNames);
         });
     }
-
-    useEffect(() => {
-        
-    }, []);
-
-    useEffect(() => {
-        
-    }, []);
-
     
-
 
     function handleSelectUf(event: ChangeEvent<HTMLSelectElement>){
         const uf = event.target.value;
@@ -159,6 +149,7 @@ const CreateMechanical : React.FC<{}> = () =>{
             setSelectedItems([...selectedItems , id])
         }      
     };
+
     async function handleSubmit(){
         const {name, email, whatsapp} = formData;
         const uf = selectedUf;

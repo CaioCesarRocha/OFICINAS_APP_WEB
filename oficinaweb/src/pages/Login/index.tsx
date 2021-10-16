@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent} from 'react';
 import {Form, Formik} from 'formik';
 import * as Yup from "yup";
-import { useHistory} from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 import {GoogleLogin, GoogleLogout, GoogleLoginResponse, GoogleLoginResponseOffline} from 'react-google-login';
 
 import api from '../../services/api';
@@ -9,7 +9,7 @@ import logo from '../../assets/logo.png';
 import './style.css';
 
 
-
+const clienteID = '656590032305-6mv2pfd3v262aoqf2ji6gu9unrbt594e.apps.googleusercontent.com';
 
 interface FormValues { //necessário para o formik
     email: string;
@@ -19,7 +19,7 @@ interface FormValues { //necessário para o formik
   
 const schema = Yup.object().shape({ //validation com Yup
     email: Yup.string().email('Email inválido').required('O campo Email é obrigatório'),
-    senha: Yup.string().required('O campo senha é obrigatório').min(6)
+    senha: Yup.string().required('O campo senha é obrigatório')
 })
 
 
@@ -41,7 +41,8 @@ const Login : React.FC<[]> = () =>{
 
 
     async function loginSuccess(response: GoogleLoginResponse | GoogleLoginResponseOffline ) {
-        if ("profileObj" in  response)  {             
+        if ("profileObj" in  response)  {   
+            console.log(response)          
             const Name = response.profileObj.name
             const Avatar = response.profileObj.imageUrl
             const Email = response.profileObj.email
@@ -137,6 +138,13 @@ const Login : React.FC<[]> = () =>{
                         <button type="submit" onClick={handleSubmit} >
                             Entrar
                         </button>
+
+                        <div id="register">Ainda não se cadastrou? 
+                            <Link to={"/create-user"}>
+                                <strong>Cadastre aqui</strong>
+                            </Link>                           
+                        </div>
+
                         <div className="google_login">
                             <GoogleLogin
                                 clientId={clienteID}

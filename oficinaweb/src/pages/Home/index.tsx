@@ -20,13 +20,11 @@ const Home = () =>{
     const location = useLocation<Location>();
 
     useEffect(() => {
-        try{
-            if(location.state.name !== ''){              
-                setName(location.state.name)
-                setEmail(location.state.email) 
-                setAvatar(location.state.avatar)
-                setLogged(true)           
-            }
+        try{                   
+            setName(location.state.name)
+            setEmail(location.state.email) 
+            setAvatar(location.state.avatar)
+            setLogged(true)                      
         }
         catch{
             setLogged(false)
