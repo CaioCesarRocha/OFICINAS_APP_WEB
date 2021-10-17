@@ -22,7 +22,7 @@ const usersController = new UsersController();
 
 
 routes.post('/login', loginController.update);
-routes.get('/login', loginController.enter);
+routes.post('/loginEnter', loginController.enter);
 
 routes.post('/users', usersController.create);
 

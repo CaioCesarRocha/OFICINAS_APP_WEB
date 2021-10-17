@@ -1,5 +1,5 @@
-import React, { useState, ChangeEvent} from 'react';
-import {Form, Formik} from 'formik';
+import React, { useEffect,useState, ChangeEvent} from 'react';
+import {useFormik} from 'formik';
 import * as Yup from "yup";
 import {Link, useHistory} from 'react-router-dom';
 import {GoogleLogin, GoogleLogout, GoogleLoginResponse, GoogleLoginResponseOffline} from 'react-google-login';
@@ -9,12 +9,14 @@ import logo from '../../assets/logo.png';
 import './style.css';
 
 
-const clienteID = '656590032305-6mv2pfd3v262aoqf2ji6gu9unrbt594e.apps.googleusercontent.com';
 
 interface FormValues { //necessário para o formik
     email: string;
     senha: string;
 }
+
+const id = process.env.REACT_APP_API_KEY
+const clienteID = '656590032305-6mv2pfd3v262aoqf2ji6gu9unrbt594e.apps.googleusercontent.com';
 
   
 const schema = Yup.object().shape({ //validation com Yup
@@ -23,23 +25,15 @@ const schema = Yup.object().shape({ //validation com Yup
 })
 
 
-
-const Login : React.FC<[]> = () =>{
-    const [ formData, setFormData] = useState({
-        email: "",
-        senha: "",
-    })
+const Login : React.FC<{}> = () =>{
+    const [ wrongPass, setWrongPass] = useState(false)
  
     const initialValues: FormValues = { email: '', senha: ''};
 
     const history = useHistory();
 
-    function handleInputChange(event: ChangeEvent<HTMLInputElement>){
-        const {name, value} = event.target
-        setFormData({...formData, [name]:value }) //copia tudo que ja tem la dentro pra evitar de um apagar o outro
-    };
 
-
+    //LOGIN GOOGLE
     async function loginSuccess(response: GoogleLoginResponse | GoogleLoginResponseOffline ) {
         if ("profileObj" in  response)  {   
             console.log(response)          
@@ -94,10 +88,49 @@ const Login : React.FC<[]> = () =>{
             setTimeout(refreshToken, refreshTiming);
         }
     }
+    
 
+    //LOGIN NORMAL
+    async function handleSubmit(data: FormValues){ 
+  
+        console.log("entrei submit") 
+        const dataUsers = []
+        dataUsers.push({email: data.email, senha: data.senha})                              
+        const dataUser  = JSON.stringify(dataUsers);
 
-    async function handleSubmit(){      
+        const res = await api.post('loginEnter', dataUser, {
+            headers: {
+            'Content-Type': 'application/json'
+            }
+        });
+        console.log(res)
+        return res    
     };
+
+    const formik = useFormik({
+        
+        initialValues: initialValues,
+    
+        validationSchema: schema,
+    
+        enableReinitialize: true,
+    
+        onSubmit: async (data) => {              
+            const resposta = await handleSubmit(data);
+
+            if(resposta.data.wrongPass === false){                  
+                formik.resetForm();
+                alert(`'Usuário ${resposta.data.name} logado com sucesso!'`);
+                history.push({
+                    pathname: '/',
+                    state: {name: resposta.data.name, avatar: '', email: data.email}
+                })   
+            }
+            else{
+                setWrongPass(true)
+            }                            
+        }       
+    })
 
 
     return(
@@ -105,65 +138,69 @@ const Login : React.FC<[]> = () =>{
             <header>
                 <img  src={logo} alt="Oficina Mecânica" />
             </header>
-            <Formik
-                validationSchema={schema}
-                initialValues={initialValues}
-                onSubmit={handleSubmit}
-            >
-                {({errors}) =>(
-                    <Form>
-                        <h1>Login</h1>
-                        <fieldset>
-                            <div className="field">
-                                <label htmlFor="email">Informe seu e-mail</label>
-                                <input
-                                    type="text"
-                                    name="email"
-                                    id="email"
-                                    onChange = {handleInputChange}                       
-                                />
-                                {errors.email &&(<div className="errorsForm">{errors.email}</div>)}
-                            </div>
-                            <div className="field">
-                                <label htmlFor="senha">Insira a senha</label>
-                                <input
-                                    type="password"
-                                    name="senha"
-                                    id="senha"
-                                    onChange = {handleInputChange}                       
-                                />
-                                {errors.senha &&(<div className="errorsForm">{errors.senha}</div>)}
-                            </div>
-                        </fieldset>
-                        <button type="submit" onClick={handleSubmit} >
-                            Entrar
-                        </button>
-
-                        <div id="register">Ainda não se cadastrou? 
-                            <Link to={"/create-user"}>
-                                <strong>Cadastre aqui</strong>
-                            </Link>                           
+   
+                <form onSubmit={formik.handleSubmit}>
+                    <h1>Login</h1>
+                    <fieldset>
+                        <div className="field">
+                            <label htmlFor="email">Informe seu e-mail</label>
+                            <input
+                                type="text"
+                                name="email"
+                                id="email"
+                                value={formik.values.email}
+                                onChange={formik.handleChange}                      
+                            />
+                            {formik.errors.email && formik.touched.email &&(<div className="errorsForm">{formik.errors.email}</div>)}
                         </div>
 
-                        <div className="google_login">
-                            <GoogleLogin
-                                clientId={clienteID}
-                                onSuccess={loginSuccess}
-                                onFailure={loginFailure}
-                                cookiePolicy={'single_host_origin'}
-                                isSignedIn={false}                          
+                        <div className="field">
+                            <label htmlFor="senha">Insira a senha</label>
+                            <input
+                                type="password"
+                                name="senha"
+                                id="senha"
+                                value={formik.values.senha}
+                                onChange={formik.handleChange}                      
                             />
-                        </div>  
-                        <div className="google_login">
-                            <GoogleLogout
-                                clientId={clienteID}
-                                onLogoutSuccess={logoutSuccess}
-                                onFailure={logoutFailure}                           
-                            />
-                        </div>  
-                    </Form> 
-                )}
-            </Formik>                 
+                            {formik.errors.senha && formik.touched.senha &&(<div className="errorsForm">{formik.errors.senha}</div>)}
+                            {
+                                wrongPass
+                                ?
+                                <div className="errorsForm">Email ou Senha Incorretos!</div>
+                                :
+                                <div></div>
+                            }
+                        </div>
+                    </fieldset>
+
+                    <button type="submit">
+                        Entrar
+                    </button>
+
+                    <div id="register">Ainda não se cadastrou? 
+                        <Link to={"/create-user"}>
+                            <strong>Cadastre aqui</strong>
+                        </Link>                           
+                    </div>
+
+                    <div className="google_login">
+                        <GoogleLogin
+                            clientId={clienteID}
+                            onSuccess={loginSuccess}
+                            onFailure={loginFailure}
+                            cookiePolicy={'single_host_origin'}
+                            isSignedIn={false}                          
+                        />
+                    </div>  
+                    <div className="google_login">
+                        <GoogleLogout
+                            clientId={clienteID}
+                            onLogoutSuccess={logoutSuccess}
+                            onFailure={logoutFailure}                           
+                        />
+                    </div>  
+                </form>               
         </div>
     );
 

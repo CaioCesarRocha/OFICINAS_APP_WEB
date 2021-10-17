@@ -23,6 +23,7 @@ let key = crypto.createHash('sha256').update(String(secret)).digest('base64').su
 class LoginController{
     //VALIDATION OF USER GOOGLE 
     async update(request: Request, response: Response){
+      console.log("entrei no user google")
       const tokens = request.body;
       const token_id = tokens[0].id
 
@@ -44,40 +45,41 @@ class LoginController{
 
     //VALIDATION OF USER NORMAL
     async enter(request: Request, response: Response){
-      let { email, senha} = request.body;
-      
+      console.log("entrei no user normal")
+      const userData =  request.body
+      const email = userData[0].email
+      let senha = userData[0].senha
+    
       const user = await knex('users').where('email', email).first()
 
-      const password = user.senha
+      const name = user.name
+      let password = user.senha
       
       if(!user){
-        return response.status(400).json({message: "User not found!"});
+        return response.json({wrongPass: true})
       }
-      else{      
-          
-        try{
-          
+      else{                
+        try{         
           let textParts = password.split(':');
-          console.log(textParts)
           let iv = Buffer.from(textParts.shift(), 'hex');
           let encryptedText = Buffer.from(textParts.join(':'), 'hex');
-          //const cipher = crypto.createCipheriv(algorithm, key, iv);
           let decipher = crypto.createDecipheriv(algorithm, key, iv);
           let decrypted = decipher.update(encryptedText);
           decrypted = Buffer.concat([decrypted, decipher.final()]);
-          console.log(decrypted.toString());
-
-          return response.status(400).json(password);         
+          password = decrypted.toString();
+          if(senha === password){
+            return response.json({name: name, wrongPass: false})
+          }
+          else{
+            return response.json({wrongPass: true})
+          }   
         } 
         catch{
           return response.status(400).json({message: "Password not found!"});
         }
       }
-
-      return response.json(user);
     }
-
-   
+  
 }
 
 export default LoginController;

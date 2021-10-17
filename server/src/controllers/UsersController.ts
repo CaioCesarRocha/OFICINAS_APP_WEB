@@ -36,7 +36,7 @@ class UsersController{
         console.log(user)
 
         
-        /*try{
+        try{
             const insertedIds = await trx('users').insert(user); 
             console.log(insertedIds)
             const user_id = insertedIds[0];          
@@ -50,7 +50,7 @@ class UsersController{
         catch{
             await trx.commit(); //finaliza a criaçao
             return response.json({errorEmail: true})
-        }*/     
+        }     
     }    
 }
 

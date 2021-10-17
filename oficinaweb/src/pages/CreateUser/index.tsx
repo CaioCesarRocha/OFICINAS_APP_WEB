@@ -1,5 +1,5 @@
-import React, {useState, ChangeEvent} from 'react';
-import {Form, Formik} from 'formik';
+import React, {useState} from 'react';
+import {useFormik} from 'formik';
 import * as Yup from "yup";
 import { Link, useHistory } from 'react-router-dom';
 import { FiArrowLeft} from 'react-icons/fi';
@@ -19,32 +19,23 @@ interface FormValues { //necessário para o formik
 const schema = Yup.object().shape({ //validation com Yup
     name: Yup.string().required('O campo Nome é obrigatório'),
     email: Yup.string().email('Email inválido').required('O campo Email é obrigatório'),
-    senha: Yup.string().required('O campo Senha é obrigatório').min(6),
+    senha: Yup.string().required('O campo Senha é obrigatório').min(6, 'A senha deve ter pelo menos 6 caracteres'),
 })
 
+
+
 const CreateUser : React.FC<{}> = () =>{
-    const [ formData, setFormData] = useState({
-        name: "",
-        email: "",
-        senha: "",
-    })
     const [errorEmail, setErrorEmail] = useState(false)
 
     const history = useHistory();
 
     const initialValues: FormValues = { name: '', email: '', senha: ''};
 
-    function handleInputChange(event: ChangeEvent<HTMLInputElement>){
-        const {name, value} = event.target
-        setFormData({...formData, [name]:value }) //copia tudo que ja tem la dentro pra evitar de um apagar o outro
-    };
 
-
-    async function handleSubmit(){
-        const {name, email, senha} = formData;
+    async function handleSubmit(data : FormValues){
 
        const dataUsers = []
-            dataUsers.push({name: name, email: email, senha: senha})                              
+            dataUsers.push({name: data.name, email: data.email, senha: data.senha})                              
             const dataUser  = JSON.stringify(dataUsers);
 
        const res = await api.post('users', dataUser, {
@@ -52,37 +43,50 @@ const CreateUser : React.FC<{}> = () =>{
             'Content-Type': 'application/json'
             }
         });
-        console.log(res)
-        if(res.data.errorEmail === true){
-            setErrorEmail(true);
-        }
-        else{
-            alert('Usuário cadastrado com sucesso!');
-            history.push({
-                pathname: '/',
-                state: {name: name, avatar: '', email: email}
-            })
-        }      
+
+        return res
     };
+
+
+    const formik = useFormik({
+        
+        initialValues: initialValues,
+    
+        validationSchema: schema,
+    
+        enableReinitialize: true,
+    
+        onSubmit: async (data) => {  
+           
+            const resposta = await handleSubmit(data);
+
+            if(resposta.data.errorEmail === false){                  
+                formik.resetForm();
+                alert(`'Usuário ${data.name} cadastrado com sucesso!'`);
+                history.push({
+                    pathname: '/',
+                    state: {name: data.name, avatar: '', email: data.email}
+                })   
+            }
+            else{
+                setErrorEmail(true)
+            }                            
+        }       
+    })
     
 
     return(
         <div id="page-create-user">
             <header>
                 <img className="logo_register" src={logo} alt="Oficina Mecânica" />
-                <Link to="/login">
+                <Link to="/">
                 <span><FiArrowLeft/></span>
                     Voltar para Home
                 </Link>
             </header>
-            
-            <Formik
-                validationSchema={schema}
-                initialValues={initialValues}
-                onSubmit={handleSubmit}
-            >
-                {({errors}) =>(
-                    <Form>
+
+                   
+                    <form onSubmit={formik.handleSubmit}>
                         <h1>Cadastro do Usuário</h1>
 
                         <fieldset>
@@ -92,9 +96,10 @@ const CreateUser : React.FC<{}> = () =>{
                                     type="text"
                                     name="name"
                                     id="name"
-                                    onChange = {handleInputChange}                       
+                                    value={formik.values.name}
+                                    onChange={formik.handleChange}                    
                                 />
-                                {errors.name &&(<div className="errorsForm">{errors.name}</div>)}
+                                {formik.errors.name && formik.touched.name &&(<div className="errorsForm">{formik.errors.name}</div>)}
                             </div>
                                       
                             <div className="field">
@@ -103,9 +108,10 @@ const CreateUser : React.FC<{}> = () =>{
                                     type="email"
                                     name="email"
                                     id="email"
-                                    onChange = {handleInputChange}                                                               
+                                    value={formik.values.email}
+                                    onChange={formik.handleChange}                                                                                  
                                 />
-                                {errors.email &&(<div className="errorsForm">{errors.email}</div>)} 
+                                {formik.errors.email && formik.touched.email &&(<div className="errorsForm">{formik.errors.email}</div>)} 
                                 {
                                     errorEmail
                                     ?
@@ -121,17 +127,16 @@ const CreateUser : React.FC<{}> = () =>{
                                     type="password"
                                     name="senha"
                                     id="senha"
-                                    onChange = {handleInputChange}
+                                    value={formik.values.senha}
+                                    onChange={formik.handleChange}
                                 />
-                                {errors.senha &&(<div className="errorsForm">{errors.senha}</div>)}                         
+                                {formik.errors.senha && formik.touched.senha &&(<div className="errorsForm">{formik.errors.senha}</div>)}                         
                             </div>
                         </fieldset>
-                        <button type="submit" onClick={handleSubmit} >
-                            Cadastrar Empresa
+                        <button type="submit" >
+                            Finalizar Cadastro
                         </button>
-                    </Form>  
-                )}
-            </Formik>        
+                    </form>       
         </div>
     );
 
