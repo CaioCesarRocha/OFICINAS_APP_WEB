@@ -13,7 +13,7 @@ interface Payload{
 }
 
 const algorithm = 'aes-256-ctr';
-
+const secret = 'ansheinzaiuca';
 
 let key = crypto.createHash('sha256').update(String(secret)).digest('base64').substr(0, 32);
 
