@@ -16,7 +16,7 @@ interface FormValues { //necessário para o formik
 }
 
 const id = process.env.REACT_APP_API_KEY
-const clienteID = '656590032305-6mv2pfd3v262aoqf2ji6gu9unrbt594e.apps.googleusercontent.com';
+
 
   
 const schema = Yup.object().shape({ //validation com Yup

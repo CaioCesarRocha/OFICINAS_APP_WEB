@@ -3,7 +3,9 @@
 /server/uploads/*
 !/server/uploads/.gitkeep
 /oficinaweb/node_modules
+/oficinaweb/.env
 /oficinamobile/node_modules
 /oficinamobile/.expo
 *.sqlite
+
 

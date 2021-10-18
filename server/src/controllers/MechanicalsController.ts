@@ -19,6 +19,8 @@ class MechanicalsController{
             items
         } = request.body;
 
+        console.log(uf, city, name)
+
         //evitar que caso a segunda operação de errado, por nao ter vinculo com a outra, insera dados errados no banco
         const trx = await knex.transaction();
 

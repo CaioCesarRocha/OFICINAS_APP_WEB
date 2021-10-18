@@ -12,12 +12,10 @@ interface Payload{
   picture: string;
 }
 
-
 const algorithm = 'aes-256-ctr';
-const secret = 'ansheinzaiuca';
+
 
 let key = crypto.createHash('sha256').update(String(secret)).digest('base64').substr(0, 32);
-//let iv = crypto.randomBytes(16);
 
 
 class LoginController{

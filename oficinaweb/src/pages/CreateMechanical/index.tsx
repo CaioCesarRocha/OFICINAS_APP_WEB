@@ -4,7 +4,7 @@ import { FiArrowLeft} from 'react-icons/fi';
 import { TileLayer, Marker, MapContainer, useMapEvents} from 'react-leaflet';
 import axios from 'axios';
 import Dropzone from '../../components/Dropzone';
-import {Form, Formik} from 'formik';
+import {useFormik} from 'formik';
 import * as Yup from "yup";
 
 import api from '../../services/api';
@@ -47,8 +47,6 @@ const schema = Yup.object().shape({ //validation com Yup
     name: Yup.string().required('O campo Nome é obrigatório'),
     email: Yup.string().email('Email inválido').required('O campo Email é obrigatório'),
     whatsapp: Yup.string().required('O campo Whatsapp é obrigatório'),
-    city: Yup.string().required('Escolha uma cidade'),
-    uf: Yup.string().required('Escolha uma UF'),
 })
 
 
@@ -56,12 +54,6 @@ const CreateMechanical : React.FC<{}> = () =>{
     const [ items, setItems] = useState<Item[]>([]);
     const [ ufs, setUfs] = useState<string[]>([]);
     const [ cities, setCities] = useState<string[]>([]);
-
-    const [ formData, setFormData] = useState({
-        name: "",
-        email: "",
-        whatsapp: "",
-    })
 
     const [ selectedUf, setSelectedUf] = useState('0');//Armazenando o estado atual da UF/cidade/ latitudes-longitude
     const [ selectedCity, setSelectedCity] = useState('0');
@@ -136,10 +128,6 @@ const CreateMechanical : React.FC<{}> = () =>{
           })      
         return null   
     }
-    function handleInputChange(event: ChangeEvent<HTMLInputElement>){
-        const {name, value} = event.target
-        setFormData({...formData, [name]:value }) //copia tudo que ja tem la dentro pra evitar de um apagar o outro
-    };
     function handleSelectItem(id: number){
         const alreadySelected = selectedItems.findIndex(item => item === id);//pra atualizar a lista selecionada sem somar o msm id
         if(alreadySelected >= 0){
@@ -150,31 +138,51 @@ const CreateMechanical : React.FC<{}> = () =>{
         }      
     };
 
-    async function handleSubmit(){
-        const {name, email, whatsapp} = formData;
+    async function handleSubmit(data : FormValues){
         const uf = selectedUf;
         const city = selectedCity;
         const [latitude, longitude] = selectedPosition;
         const items = selectedItems;
 
-        const data = new FormData(); // transforma os dados que eram json em multipart(poder enviar arquivo)
+        const dataMechanical = new FormData(); // transforma os dados que eram json em multipart(poder enviar arquivo)
 
-        data.append('name', name);
-        data.append('email', email);
-        data.append('whatsapp', whatsapp);
-        data.append('uf', uf);
-        data.append('city', city);
-        data.append('latitude', String(latitude));
-        data.append('longitude', String(longitude));       
-        data.append('items', items.join(','));
+        dataMechanical.append('name', data.name);
+        dataMechanical.append('email', data.email);
+        dataMechanical.append('whatsapp', data.whatsapp);
+        dataMechanical.append('uf', uf);
+        dataMechanical.append('city', city);
+        dataMechanical.append('latitude', String(latitude));
+        dataMechanical.append('longitude', String(longitude));       
+        dataMechanical.append('items', items.join(','));
         if(selectedFile){
-            data.append('image', selectedFile)
+            dataMechanical.append('image', selectedFile)
         }
-        await api.post('mechanicals', data);
+        const res = await api.post('mechanicals', dataMechanical);
 
-        alert('Empresa cadastrada com sucesso!');
-        history.push('/')
+        return res
     };
+
+ 
+    const formik = useFormik({
+        
+        initialValues: initialValues,
+    
+        validationSchema: schema,
+    
+        enableReinitialize: true,
+    
+        onSubmit: async (data) => {              
+            const resposta = await handleSubmit(data);
+            
+            formik.resetForm();
+            alert(`'Empresa ${resposta.data.name} cadastrada com sucesso!'`);
+            history.push({
+                pathname: '/',
+                state: {name: location.state.name, avatar: location.state.avatar, email: location.state.email}
+            })   
+        }                                     
+    })
+
     
 
     return(
@@ -191,14 +199,7 @@ const CreateMechanical : React.FC<{}> = () =>{
                     Voltar para Home
                 </Link>
             </header>
-
-            <Formik
-                validationSchema={schema}
-                initialValues={initialValues}
-                onSubmit={handleSubmit}
-            >
-                {({errors}) =>(
-                    <Form>
+                    <form onSubmit={formik.handleSubmit}>
                         <h1>Cadastro da Empresa</h1>
 
                         <Dropzone onFileUploaded={setSelectedFile}/>
@@ -213,9 +214,10 @@ const CreateMechanical : React.FC<{}> = () =>{
                                     type="text"
                                     name="name"
                                     id="name"
-                                    onChange = {handleInputChange}                       
+                                    value={formik.values.name}
+                                    onChange={formik.handleChange}                                                           
                                 />
-                                {errors.name &&(<div className="errorsForm">{errors.name}</div>)}
+                                {formik.errors.name &&(<div className="errorsForm">{formik.errors.name}</div>)}
                             </div>
 
                             <div className="field-group">
@@ -225,9 +227,10 @@ const CreateMechanical : React.FC<{}> = () =>{
                                         type="email"
                                         name="email"
                                         id="email"
-                                        onChange = {handleInputChange}                                                               
+                                        value={formik.values.email}
+                                        onChange={formik.handleChange}                                                                
                                     />
-                                    {errors.email &&(<div className="errorsForm">{errors.email}</div>)} 
+                                    {formik.errors.email &&(<div className="errorsForm">{formik.errors.email}</div>)} 
                                 </div>                 
                                 <div className="field">
                                     <label htmlFor="whatsapp">Whatsapp</label>
@@ -235,9 +238,10 @@ const CreateMechanical : React.FC<{}> = () =>{
                                         type="text"
                                         name="whatsapp"
                                         id="whatsapp"
-                                        onChange = {handleInputChange}
+                                        value={formik.values.whatsapp}
+                                        onChange={formik.handleChange}  
                                     />
-                                    {errors.whatsapp &&(<div className="errorsForm">{errors.whatsapp}</div>)}                         
+                                    {formik.errors.whatsapp &&(<div className="errorsForm">{formik.errors.whatsapp}</div>)}                         
                                 </div>
                             </div>
                         </fieldset>
@@ -270,8 +274,8 @@ const CreateMechanical : React.FC<{}> = () =>{
                                             <option key={uf} value={uf}>{uf}</option>
                                         ))};
                                     </select>
-                                    {errors.uf &&(<div className="errorsForm">{errors.uf}</div>)}
                                 </div>
+
                                 <div className="field">
                                     <label htmlFor="city">Cidade</label>
                                     <select 
@@ -285,7 +289,6 @@ const CreateMechanical : React.FC<{}> = () =>{
                                             <option key={city} value={city}>{city}</option>
                                         ))};
                                     </select>
-                                    {errors.city &&(<div className="errorsForm">{errors.city}</div>)}
                                 </div>
                             </div>
                         </fieldset>
@@ -309,13 +312,10 @@ const CreateMechanical : React.FC<{}> = () =>{
                             </ul>
                         </fieldset>
 
-                        <button type="submit" onClick={handleSubmit} >
+                        <button type="submit">
                             Cadastrar Empresa
                         </button>
-                    </Form>
-                )}
-            </Formik>
-    
+                    </form>    
         </div>
     );
 }
