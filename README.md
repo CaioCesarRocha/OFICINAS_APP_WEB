@@ -5,7 +5,7 @@ Tecnologias usadas:
 
 WEB: React(TypeScript)
 
--> react-router-dom: navegação (BrowserRouter, Link, useHistory)
+-> react-router-dom: navegação (BrowserRouter, Link, useHistory, useLocation)
 
 ->leaflet & react-leaflet: mapa escolhido para ser usado na web;
 
