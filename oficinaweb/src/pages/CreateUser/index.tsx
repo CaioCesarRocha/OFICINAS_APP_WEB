@@ -77,14 +77,13 @@ const CreateUser : React.FC<{}> = () =>{
 
     return(
         <div id="page-create-user">
-            <header>
-                <img className="logo_register" src={logo} alt="Oficina Mecânica" />
+            <header>              
                 <Link to="/">
                 <span><FiArrowLeft/></span>
                     Voltar para Home
                 </Link>
             </header>
-
+            <img id="logoCreateUser" src={logo} alt="Oficina Mecânica" />
                    
                     <form onSubmit={formik.handleSubmit}>
                         <h1>Cadastro do Usuário</h1>

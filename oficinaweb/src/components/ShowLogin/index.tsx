@@ -20,6 +20,7 @@ useEffect(() => {
     setNames(name);
     setEmails(email);
     setImages(avatar);
+    console.log(images)
     if(images === ''){
         const notAvatar = "https://cursos.ifsp.edu.br/static/img/avatar.png"
         setImages(notAvatar)

@@ -36,18 +36,19 @@ const Home = () =>{
         <div id="page-home">
             <div className="content">
                 <header>
-                    <img id="logo" src={logo} alt="Oficina Mecânica" />
                     {
                         logged                      
                         ?                                      
                         <ShowLogin name={name} email={email} avatar={avatar}/>
                         :
-                        <Link to="/login">
+                        <Link to="/login"> 
                             <span><FiLogIn/></span>
-                            FAZER LOGIN
+                            FAZER LOGIN                                                                             
                         </Link>                                            
-                    }                 
+                    } 
                 </header>
+                <img id="logoHome" src={logo} alt="Oficina Mecânica" />                                   
+                
                 <main>
                     <h1>Seu marketplace de Oficinas Mecânicas</h1>
                     <p>Ajudamos pessoas a encontrar Oficinas mais próximas da sua localidade atual!</p>

@@ -1,24 +1,17 @@
-.logo_register{
-    width: 150px;
-    height:110px;
-    margin-left: 180px;
-  }
-  
-  .errorsForm{
+
+.errorsForm{
     color:red;
-  }
+}
   
 #page-create-user {
     width: 100%;
-    max-width: 1100px;
-  
+    max-width: 1100px; 
     margin: 0 auto;
 }
 
 #page-create-user header {
     margin-top: 35px; 
     display: flex;
-    justify-content: space-between;
     align-items: center;
 }
 
@@ -28,20 +21,30 @@
   text-decoration: none;
   display: flex;
   align-items: center;
+  margin-left: auto;
 }
 
 #page-create-user header a svg {
-  margin-right: 16px;
+  margin-right: 5px;
   color: var(--primary-color);
+  margin-left: auto;
 }
 
+#logoCreateUser{
+  width: 150px;
+  height: 110px;
+  display: flex;
+  margin: 0 auto;
+  padding-top: 5px;
+}
+
+
 #page-create-user form {
-    margin: 40px auto;
+    margin: 20px auto;
     padding: 32px;
     max-width: 730px;
     background: #FFF;
-    border-radius: 8px;
-  
+    border-radius: 8px; 
     display: flex;
     flex-direction: column;
   }
@@ -51,7 +54,7 @@
   }
   
   #page-create-user form fieldset {
-    margin-top: 48px;
+    margin-top: 30px;
     min-inline-size: auto;
     border: 0;
   }
@@ -98,7 +101,7 @@
     font-size: 16px;
     border: 0;
     align-self: flex-end;
-    margin-top: 40px;
+    margin-top: 20px;
     transition: background-color 0.2s;
     cursor: pointer;
   }
